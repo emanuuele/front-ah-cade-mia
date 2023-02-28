@@ -1,10 +1,10 @@
 import React from 'react'
 import './styleComponents/header.module.scss'
 
-export default function Header({titulo}){
+export default function Header(){
     return(
-        <div>
-            <img src="logo.png" className="logo" sizes='51px' alt="logo de pato da marca" /> <p> {titulo}</p>
-        </div>
+        <section>
+            <img src="logo.png" className="logo" sizes='51px' alt="logo de pato da marca" /> <p>Ah, cadê mia?</p>
+        </section>
     )
 }

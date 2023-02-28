@@ -3,8 +3,9 @@ import { createBrowserRouter } from 'react-router-dom'
 
 import Cadastro from './pages/cadastro/cadastro'
 import EfetuarPagamento from './pages/efetuarPagamento/efetuarPagamento'
-import Home from './pages/listaClientes/listaClientes'
+import Home from './pages/home/home'
 import ListaPagamentos from './pages/listaPagamentos/listaPagamentos'
+import ListaClientes from './pages/listaClientes/listaClientes'
 
 export const router = createBrowserRouter([
     {
@@ -16,11 +17,15 @@ export const router = createBrowserRouter([
         element: <EfetuarPagamento/>
     },
     {
-        path:"/home",
+        path:"/",
         element: <Home/>
     },
     {
         path:"/listaPagamentos",
         element: <ListaPagamentos/>
+    },
+    {
+        path:"/listaClientes",
+        element: <ListaClientes/>
     }
 ])
