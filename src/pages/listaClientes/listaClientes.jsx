@@ -1,10 +1,4 @@
-import Header from "../../components/Header";
-
 const ListaClientes = () => {
-    return (
-        <>
-            <Header titulo="Ah, cadê miaaa?" />
-        </>
-    )
+    return 
 }
 export default ListaClientes;

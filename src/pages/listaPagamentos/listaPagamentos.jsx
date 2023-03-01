@@ -1,8 +1,4 @@
-import Header from "../../components/Header"
-
 const ListaPagamentos = () =>{
-    return(
-        <Header titulo="Ah, cadê mia?" />
-    )
+    return
 }
 export default ListaPagamentos

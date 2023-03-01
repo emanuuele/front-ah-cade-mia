@@ -21,11 +21,11 @@ export const router = createBrowserRouter([
         element: <Home/>
     },
     {
-        path:"/listaPagamentos",
+        path:"/listarPagamentos",
         element: <ListaPagamentos/>
     },
     {
-        path:"/listaClientes",
+        path:"/listarClientes",
         element: <ListaClientes/>
     }
 ])
