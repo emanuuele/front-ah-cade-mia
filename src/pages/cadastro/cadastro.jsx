@@ -1,9 +1,9 @@
-import { ArrowLeftOutlined } from '@ant-design/icons'
 import { Button, DatePicker, Form, Input } from 'antd';
 import './style.scss'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useNavigate } from 'react-router-dom';
+import HeaderSecond from '../../components/HeaderSecond';
 dayjs.extend(customParseFormat);
 const dateFormatList = 'DD/MM/YYYY';
 
@@ -14,10 +14,7 @@ const Cadastro = () => {
     }
     return (
         <div>
-            <div className="body-1">
-                <button onClick={() => linkTo('')}><ArrowLeftOutlined /></button>
-                <h3> Criar cliente </h3>
-            </div>
+            <HeaderSecond titulo= "Criar cliente"/>
             <section className='section-form'>
                 <Form className='form'>
                     <Form.Item >
