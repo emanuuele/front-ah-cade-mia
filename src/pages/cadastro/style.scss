@@ -5,9 +5,16 @@
     button{
         background-color: transparent;
         border: none;
+        cursor: pointer;
     }
     h3{
         width: 100%;
         text-align: center;
+        color: #25507d;
     }
+}
+.section-form{
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
