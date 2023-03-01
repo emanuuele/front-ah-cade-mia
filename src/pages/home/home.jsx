@@ -9,10 +9,10 @@ const Home = () => {
                 <Header titulo="Ah, cadê miaaa?" />
             </div>
             <div className="body">
-                <Button style={{margin:'12px', borderRadius:'500px'}} onClick={() => { }} type="default" >Criar cliente</Button>
-                <Button style={{margin:'12px', borderRadius:'500px'}} onClick={() => { }} type="default" >Listar clientes</Button>
-                <Button style={{margin:'12px', borderRadius:'500px'}} onClick={() => { }} type="default" >Listar pagamentos</Button>
-                <Button style={{margin:'12px', borderRadius:'500px'}} onClick={() => { }} type="default" >Efetuar pagamento</Button>
+                <Button style={{margin:'12px', borderRadius:'500px', minWidth: '200px'}} onClick={() => { }} type="default" >Criar cliente</Button>
+                <Button style={{margin:'12px', borderRadius:'500px', minWidth: '200px'}} onClick={() => { }} type="default" >Listar clientes</Button>
+                <Button style={{margin:'12px', borderRadius:'500px', minWidth: '200px'}} onClick={() => { }} type="default" >Listar pagamentos</Button>
+                <Button style={{margin:'12px', borderRadius:'500px', minWidth: '200px'}} onClick={() => { }} type="default" >Efetuar pagamento</Button>
             </div>
         </>
     )
