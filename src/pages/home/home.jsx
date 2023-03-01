@@ -5,7 +5,6 @@ import Header from "../../components/Header";
 const Home = () => {
     return (
         <>
-        {/* aaaaaaaaaa */}
             <div>
                 <Header titulo="Ah, cadê miaaa?" />
             </div>
