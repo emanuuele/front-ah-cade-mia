@@ -38,7 +38,7 @@ const ListaPagamentos = () => {
     return (
         <>
             <HeaderSecond titulo="Listar pagamentos" />
-            <div className="table-responsive" style={{ paddingLeft: '10px', paddingRight: '10px'}}>
+            <div className="table-responsive" style={{ paddingLeft: '10vh', paddingRight: '10vh'}}>
             <Table dataSource={dataSource} columns={columns} />
         </div>
         </>
