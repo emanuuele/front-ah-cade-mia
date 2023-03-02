@@ -1,20 +1,49 @@
-import { Table } from "antd";
+import { Button, Modal, Table } from "antd";
+import {useState} from 'react'
 import HeaderSecond from "../../components/HeaderSecond";
 import "./style.scss";
 
 const ListaClientes = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+  function excluirCliente() {}
+  function editarCliente() {}
   const dataSource = [
     {
       key: "1",
-      codigo:'1',
-      nome:'emanuele',
-      idade:'18',
-      altura: '1,67',
-      peso:'64,5',
-      nascimento:'20/04/2004',
-      acao: 'editar/ecluir',
-      ultimoPagamento: '16/02/2023'
-
+      codigo: "1",
+      nome: "emanuele",
+      idade: "18",
+      altura: "1,67",
+      peso: "64,5",
+      nascimento: "20/04/2004",
+      acao: (
+        <div>
+          <Button
+            style={{ margin: "12px", borderRadius: "500px" }}
+            type="default"
+            >
+            Editar
+          </Button>
+          <Button
+            style={{ margin: "12px", borderRadius: "500px" }}
+            danger
+            type="primary"
+            onClick={() => showModal()}
+          >
+            Excluir
+          </Button>
+        </div>
+      ),
+      ultimoPagamento: "16/02/2023",
     },
   ];
 
@@ -65,6 +94,8 @@ const ListaClientes = () => {
       <HeaderSecond titulo="Listar clientes" />
       <section className="section">
         <Table dataSource={dataSource} columns={columns} />
+        <Modal title="Deseja apagar o cliente" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+      </Modal>
       </section>
     </div>
   );
