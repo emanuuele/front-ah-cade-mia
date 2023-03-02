@@ -1,9 +1,9 @@
 import { ArrowLeftOutlined } from '@ant-design/icons'
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './styleComponents/headerSecond.module.scss'
 
-export default function HeaderSecond() {
+export default function HeaderSecond({titulo}) {
     const navigate = useNavigate()
     function linkTo(param) {
         navigate(`/${param}`)
@@ -11,7 +11,7 @@ export default function HeaderSecond() {
     return (
         <div className={styles.sectionHeaderSecond}>
             <button onClick={() => linkTo('')}><ArrowLeftOutlined/></button>
-            <h3> Criar cliente </h3>
+            <h3>{titulo}</h3>
         </div>
     )
 }
