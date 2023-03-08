@@ -1,17 +1,11 @@
 import { Table } from "antd"
+import React, { useState } from "react";
 import HeaderSecond from "../../components/HeaderSecond"
+import api from "../../services/api";
 import '../../style.css'
 
 const ListaPagamentos = () => {
-    const dataSource = [
-        {
-            key: "1",
-            codigo: "1",
-            nome: "emanuele",
-            valor: "18",
-            ultimoPagamento: "02/03/2023"
-        },
-    ];
+    const [listPagamentosData, setListPagamentosData] = useState([]);
 
     const columns = [
         {
@@ -35,11 +29,19 @@ const ListaPagamentos = () => {
             key: "ultimoPagamento"
         }
     ];
+    async function listPayments() {
+        const response2 = await api().get("/pagamentos");
+        setListPagamentosData(response2.data);
+    }
+      
+      React.useEffect(() => {
+        listPayments();
+      }, []);
     return (
         <>
             <HeaderSecond titulo="Listar pagamentos" />
             <div className="table-responsive" style={{ paddingLeft: '10vh', paddingRight: '10vh'}}>
-            <Table dataSource={dataSource} columns={columns} />
+            <Table dataSource={listPagamentosData} columns={columns} />
         </div>
         </>
     )

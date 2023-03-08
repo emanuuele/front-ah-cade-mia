@@ -1,5 +1,5 @@
 import { Button, Input, Modal } from "antd";
-import { useState } from "react";
+import React, { useState } from "react";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import "./style.scss";
@@ -20,7 +20,10 @@ const Home = () => {
   function efetuarPagamento() {
     setListaPagamentos(() => {
       const newLista = [...listaPagamentos];
-      newLista.unshift({ valor: Number(valor), ultimoPagamento: ultimoPagamento });
+      newLista.unshift({
+        valor: Number(valor),
+        ultimoPagamento: ultimoPagamento,
+      });
       console.log(newLista);
       return newLista;
     });
@@ -34,6 +37,11 @@ const Home = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  
+
+  
+
   return (
     <>
       <div className="body">
@@ -58,35 +66,9 @@ const Home = () => {
         >
           Listar pagamentos
         </Button>
-        <Button
-          style={{ margin: "12px", borderRadius: "500px", minWidth: "200px" }}
-          onClick={() => showModal()}
-          type="default"
-        >
-          Efetuar pagamento
-        </Button>
+        
       </div>
-      <Modal
-        title="Efetuar pagamento"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <Input
-          placeholder="Valor: "
-          value={valor}
-          onChange={(e) => setValor(e.target.value)}
-          type="number"
-        />
-        <Button
-          onClick={() => efetuarPagamento(valor)}
-          style={{ borderRadius: "500px", minWidth: "200px", width: "100%" }}
-          htmlType="submit"
-          type="primary"
-        >
-          Efetuar pagamento
-        </Button>
-      </Modal>
+      
     </>
   );
 };
