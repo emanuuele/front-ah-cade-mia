@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal } from "antd";
+import { Button, Input, Modal } from "antd";
 import { useState } from "react";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -6,7 +6,6 @@ import "./style.scss";
 import "antd/dist/reset.css";
 import { useNavigate } from "react-router-dom";
 dayjs.extend(customParseFormat);
-const dateFormatList = "DD/MM/YYYY";
 const Home = () => {
   let data;
   const navigate = useNavigate();
@@ -16,7 +15,6 @@ const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [valor, setValor] = useState(null);
   const [ultimoPagamento, setUltimoPagamento] = useState(data);
-
   const [listaPagamentos, setListaPagamentos] = useState([]);
 
   function efetuarPagamento() {
