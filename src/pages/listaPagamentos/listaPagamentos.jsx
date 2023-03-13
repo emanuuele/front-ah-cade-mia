@@ -1,4 +1,5 @@
 import { Table } from "antd"
+import { formatToBRL } from 'brazilian-values';
 import React, { useState } from "react";
 import HeaderSecond from "../../components/HeaderSecond"
 import api from "../../services/api";
@@ -9,9 +10,9 @@ const ListaPagamentos = () => {
 
     const columns = [
         {
-            title: "Código",
-            dataIndex: "codigo",
-            key: "codigo",
+            title: "Id",
+            dataIndex: "id",
+            key: "id",
         },
         {
             title: "Nome",
@@ -21,17 +22,24 @@ const ListaPagamentos = () => {
         {
             title: "Valor",
             dataIndex: "valor",
-            key: "valor"
+            key: "valor",
+            
         },
         {
             title: "Último pagamento",
             dataIndex: "ultimoPagamento",
             key: "ultimoPagamento"
+        },
+        {
+            title: "Vencimento",
+            dataIndex: "vencimento",
+            key: "vencimento"
         }
     ];
     async function listPayments() {
-        const response2 = await api().get("/pagamentos");
-        setListPagamentosData(response2.data);
+        const response = await api().get("/pagamentos");
+
+        setListPagamentosData(response.data);
     }
       
       React.useEffect(() => {

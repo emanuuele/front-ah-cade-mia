@@ -1,23 +1,31 @@
-
-.section-2, .busca{
+.content{
+  display: flex;
+  align-items: center;
+}
+.section-2{
     display: flex;
     justify-content: center;
-    width: 100%;
+}.busca{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 .section-1{
-    margin-left: 10vh;
-    margin-right: 10vh;
+    margin-left: 5vh;
+    margin-right: 5vh;
 }
 .search {
+    
     justify-content: center;
-    width: 50%;
+    width: 200px;
     display: flex;
     color: #757575;
     text-align: left;
     font-size: 16px;
     font-style: normal;
     font-weight: 400;
-    letter-spacing: normalpx;
+    letter-spacing: normal;
     line-height: 1rem;
     border-bottom-color: #757575;
     border-top-color: #757575;

@@ -1,13 +1,15 @@
-import { Button, DatePicker, Form, Input, Modal, Table } from "antd";
+import { Button, DatePicker, Form, Input, Modal, Table, Switch } from "antd";
 import React, { useState } from "react";
 import HeaderSecond from "../../components/HeaderSecond";
 import "./style.scss";
 import "../../style.css";
-import dayjs from "dayjs";
-import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
-import { ToastContainer, toast } from "react-toastify";
+import { formatToBRL } from "brazilian-values";
+import dayjs from "dayjs";
+import moment from "moment";
+
 const dateFormatList = "DD/MM/YYYY";
+const dateFormat = "YYYY/MM/DD";
 
 const ListaClientes = () => {
   const [excluirModalOpen, setExcluirModalOpen] = useState(false);
@@ -19,18 +21,18 @@ const ListaClientes = () => {
   const [idade, setIdade] = useState(null);
   const [peso, setPeso] = useState(null);
   const [altura, setAltura] = useState(null);
-  const [nascimento, setNascimento] = useState();
+  const [nascimento, setNascimento] = useState(null);
+  const [ultimoPagamento, setUltimoPagamento] = useState(null);
   const [id, setId] = useState(null);
   const [valor, setValor] = useState("");
-
   const handleOkEditar = () => {
     setEditarModalOpen(false);
-    setEfetuarPagamento(false)
+    setEfetuarPagamento(false);
   };
   const handleCancel = () => {
     setExcluirModalOpen(false);
     setEditarModalOpen(false);
-    setEfetuarPagamento(false)
+    setEfetuarPagamento(false);
   };
   const excluirCliente = () => {
     setExcluirModalOpen(true);
@@ -40,25 +42,6 @@ const ListaClientes = () => {
   }
   function efetuarPagamentoa() {
     setEfetuarPagamento(true);
-  }
-
-  let data;
-  let dia = new Date().getDate();
-  let mes = new Date().getMonth() + 1;
-  let ano = new Date().getFullYear();
-
-  if (dia < 10 && mes < 10) {
-    dia = `0${dia}`;
-    mes = `0${mes}`;
-    data = `${dia}/${mes}/${ano}`;
-  } else if (dia > 10 && mes < 10) {
-    dia = dia;
-    mes = `0${mes}`;
-    data = `${dia}/${mes}/${ano}`;
-  } else if (dia < 10 && mes > 10) {
-    dia = `0${dia}`;
-    mes = mes;
-    data = `${dia}/${mes}/${ano}`;
   }
 
   const columns = [
@@ -106,8 +89,13 @@ const ListaClientes = () => {
             type="default"
             onClick={() => {
               setId(param.id);
-              console.log(id);
+              setNome(param.nome);
+              setAltura(param.altura);
+              setIdade(param.idade);
+              setNascimento(param.nascimento);
 
+              setPeso(param.peso);
+              setUltimoPagamento(param.ultimoPagamento);
               editarCliente();
             }}
             style={{ margin: "3px", borderRadius: "500px", minWidth: "50px" }}
@@ -115,7 +103,7 @@ const ListaClientes = () => {
             Editar
           </Button>
           <Button
-            type="primary"
+            type="default"
             onClick={() => {
               setId(param.id);
               excluirCliente();
@@ -126,61 +114,78 @@ const ListaClientes = () => {
             Excluir
           </Button>
           <Button
-            type="default"
+            type="primary"
             onClick={() => {
               setId(param.id);
-              console.log(id);
-
+              // console.log(id);
               efetuarPagamentoa();
             }}
             style={{ margin: "3px", borderRadius: "500px", minWidth: "50px" }}
           >
-            Selecionar
+            Pagar
           </Button>
         </>
       ),
     },
   ];
-  async function listClients() {
-    const response = await api().get("/clients");
-    setListClientsData(response.data);
-    console.log({ response });
-  }
+
   async function putClients() {
     const clientData = {
       nome: nome,
       idade: idade,
       peso: peso,
       altura: altura,
-      nascimento: nascimento,
+      nascimento: nascimento.format(dateFormatList),
       ultimoPagamento: new Date(),
     };
     const response = await api().put(`/clients/${id}`, { clientData });
-    toast.success(`${nome} editado`);
+    listClients();
+    setEditarModalOpen(false);
   }
 
   async function deleteClient() {
     const response = await api().delete(`/clients/${id}`);
-    toast.sucess(`${nome} excluído`);
+    listClients();
+    setExcluirModalOpen(false);
   }
   async function makePayment() {
+    let ultimoPagamento = new Date();
+    let ultimoPagamentoString = ultimoPagamento.toISOString().slice(0, 10);
     const pagamento = {
       valor: valor,
-      ultimoPagamento: new Date(),
-      id_client: id,
+      ultimoPagamento: ultimoPagamentoString,
+      id_cliente: id,
     };
-    const response = await api().post("/pagamentos", { pagamento });
+    const response = await api().post(`/pagamentos`, { pagamento });
+    listClients();
+    setEfetuarPagamento(false);
+  }
+
+  async function listClients() {
+    const response = await api().get("/clients");
+    setListClientsData(response.data);
+    console.log({ response });
+  }
+
+  async function listVeacos() {
+    const response = await api().get("/veacos");
+    setListClientsData(response.data);
+  }
+
+  const onChangeVeacos = async (checked) => {
+    checked ? listVeacos() : listClients();
+  };
+  async function filterClients() {
+    console.log(`/clients/${pesquisa}`);
+    const response = await api().get(`/clients/${pesquisa}`);
+    setListClientsData(response.data);
   }
 
   React.useEffect(() => {
     listClients();
   }, []);
 
-  const navigate = useNavigate();
-
-  function linkTo(param) {
-    navigate(`/${param}`);
-  }
+  const [form] = Form.useForm();
 
   return (
     <div>
@@ -198,9 +203,14 @@ const ListaClientes = () => {
             style={{ margin: "12px", borderRadius: "500px" }}
             htmlType="submit"
             type="primary"
+            onClick={() => filterClients()}
           >
             Pesquisar
           </Button>
+          <div className="content">
+            <label htmlFor="">Veacos: </label>
+            <Switch defaultChecked={false} onChange={onChangeVeacos} />
+          </div>
         </div>
         <div className="section-2">
           <div className="table-responsive">
@@ -213,16 +223,20 @@ const ListaClientes = () => {
             open={editarModalOpen}
             onOk={handleOkEditar}
             onCancel={handleCancel}
+            footer={null}
           >
-            <Form className="form">
-              <Form.Item>
+            <Form className="form" form={form}>
+              <Form.Item name="nome">
+                <label htmlFor="">Nome completo:</label>
                 <Input
+                  autoFocus
                   placeholder="Nome completo: "
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
                 />
               </Form.Item>
-              <Form.Item>
+              <Form.Item name="idade">
+                <label htmlFor="">Idade:</label>
                 <Input
                   type="number"
                   placeholder="Idade: "
@@ -230,7 +244,8 @@ const ListaClientes = () => {
                   onChange={(e) => setIdade(e.target.value)}
                 />
               </Form.Item>
-              <Form.Item>
+              <Form.Item name="peso">
+                <label htmlFor="">Peso:</label>
                 <Input
                   type="number"
                   placeholder="Peso: "
@@ -238,7 +253,8 @@ const ListaClientes = () => {
                   onChange={(e) => setPeso(e.target.value)}
                 />
               </Form.Item>
-              <Form.Item>
+              <Form.Item name="altura">
+                <label htmlFor="">Altura:</label>
                 <Input
                   type="number"
                   placeholder="Altura: "
@@ -246,24 +262,23 @@ const ListaClientes = () => {
                   onChange={(e) => setAltura(e.target.value)}
                 />
               </Form.Item>
-              <Form.Item name="date-picker" label="Data de nascimento">
+              <Form.Item name="nascimento" label="Data de nascimento">
                 <DatePicker
-                  defaultValue={dayjs(data, dateFormatList)}
-                  format={dateFormatList}
-                />
-              </Form.Item>
-              <Form.Item name="date-picker" label="Último pagamento">
-                <DatePicker
-                  disabled
-                  defaultValue={dayjs(data, dateFormatList)}
-                  format={dateFormatList}
+                  placeholder="Data de nascimento:"
                   value={nascimento}
                   onChange={(e) => {
-                    setNascimento(e.format(dateFormatList));
+                    setNascimento(e);
                   }}
                 />
               </Form.Item>
-              <Form.Item>
+              <Form.Item name="ultimoPagamento" label="Último pagamento">
+                <DatePicker
+                  placeholder={ultimoPagamento}
+                  disabled
+                  value={ultimoPagamento}
+                />
+              </Form.Item>
+              <Form.Item name="butao">
                 <Button
                   style={{
                     borderRadius: "500px",
@@ -294,8 +309,11 @@ const ListaClientes = () => {
             open={efetuarPagamento}
             onOk={handleOkEditar}
             onCancel={handleCancel}
+            footer={null}
           >
+            <label htmlFor="">Valor:</label>
             <Input
+              autoFocus
               placeholder="Valor: "
               value={valor}
               onChange={(e) => setValor(e.target.value)}
@@ -307,6 +325,7 @@ const ListaClientes = () => {
                 borderRadius: "500px",
                 minWidth: "200px",
                 width: "100%",
+                marginBlock: "10px",
               }}
               htmlType="submit"
               type="primary"
@@ -316,7 +335,6 @@ const ListaClientes = () => {
           </Modal>
         </div>
       </section>
-      <ToastContainer />
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import HeaderSecond from "../../components/HeaderSecond";
 import React, { useState } from "react";
 import api from "../../services/api";
+import moment from "moment/moment";
 dayjs.extend(customParseFormat);
 const dateFormatList = "DD/MM/YYYY";
 
@@ -16,55 +17,59 @@ const Cadastro = () => {
   }
   let data;
   let dia = new Date().getDate();
-  let mes = new Date().getMonth()+1;
+  let mes = new Date().getMonth() + 1;
   let ano = new Date().getFullYear();
 
-  
   if (dia < 10 && mes < 10) {
-      dia = `0${dia}`;
-      mes = `0${mes}`;
+    dia = `0${dia}`;
+    mes = `0${mes}`;
     data = `${dia}/${mes}/${ano}`;
   } else if (dia > 10 && mes < 10) {
-      dia = dia;
+    dia = dia;
     mes = `0${mes}`;
     data = `${dia}/${mes}/${ano}`;
   } else if (dia < 10 && mes > 10) {
-      dia = `0${dia}`;
-      mes = mes;
-      data = `${dia}/${mes}/${ano}`;
-    }
-    const [nome, setNome] = useState("");
-    const [idade, setIdade] = useState(null);
-    const [peso, setPeso] = useState(null);
-    const [altura, setAltura] = useState(null);
-    const [nascimento, setNascimento] = useState(data);
+    dia = `0${dia}`;
+    mes = mes;
+    data = `${dia}/${mes}/${ano}`;
+  }
+  const [nome, setNome] = useState("");
+  const [idade, setIdade] = useState(null);
+  const [peso, setPeso] = useState(null);
+  const [altura, setAltura] = useState(null);
+  const [nascimento, setNascimento] = useState(data);
 
-    async function createClient() {
-        const clientData = {
-            nome: nome,
-            idade: idade,
-            peso: peso,
-            altura: altura,
-            nascimento: nascimento,
-            ultimoPagamento: new Date(),
-        };
-  
-        const response = await api().post("/clients", { clientData });
-        linkTo('/listarClientes')
-    }
+  async function createClient() {
+    let ultimoPagamento = new Date();
+    let ultimoPagamentoString = ultimoPagamento.toISOString().slice(0, 10);
+    const clientData = {
+      nome: nome,
+      idade: idade,
+      peso: peso,
+      altura: altura,
+      nascimento: nascimento.format(dateFormatList),
+      ultimoPagamento: ultimoPagamentoString,
+    };
+
+    const response = await api().post("/clients", { clientData });
+    linkTo("/listarClientes");
+  }
   return (
     <div>
       <HeaderSecond titulo="Criar cliente" />
       <section className="section-form">
         <Form className="form">
           <Form.Item>
+            <label>Nome:</label>
             <Input
+              autoFocus
               placeholder="Nome completo: "
               value={nome}
               onChange={(e) => setNome(e.target.value)}
             />
           </Form.Item>
           <Form.Item>
+            <label>Idade:</label>
             <Input
               type="number"
               placeholder="Idade: "
@@ -73,6 +78,7 @@ const Cadastro = () => {
             />
           </Form.Item>
           <Form.Item>
+            <label>Peso:</label>
             <Input
               type="number"
               placeholder="Peso: "
@@ -81,6 +87,7 @@ const Cadastro = () => {
             />
           </Form.Item>
           <Form.Item>
+            <label>Altura:</label>
             <Input
               type="number"
               placeholder="Altura: "
@@ -88,14 +95,15 @@ const Cadastro = () => {
               onChange={(e) => setAltura(e.target.value)}
             />
           </Form.Item>
-          <Form.Item name="date-picker">
+          <Form.Item name="date-picker" label="Data de nascimento">
             <DatePicker
-              defaultValue={dayjs(data, dateFormatList)}
+              // defaultValue={moment('2023-12-12', dateFormatList)}
               format={dateFormatList}
               placeholder="Data de nascimento:"
               value={nascimento}
               onChange={(e) => {
-                setNascimento(e.format(dateFormatList));
+                // setNascimento(e.format(dateFormatList));
+                setNascimento(e);
               }}
             />
           </Form.Item>
