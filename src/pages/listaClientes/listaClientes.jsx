@@ -12,6 +12,8 @@ const dateFormatList = "DD/MM/YYYY";
 const dateFormat = "YYYY/MM/DD";
 
 const ListaClientes = () => {
+  const [form] = Form.useForm();
+
   const [excluirModalOpen, setExcluirModalOpen] = useState(false);
   const [editarModalOpen, setEditarModalOpen] = useState(false);
   const [efetuarPagamento, setEfetuarPagamento] = useState(false);
@@ -89,14 +91,25 @@ const ListaClientes = () => {
             type="default"
             onClick={() => {
               setId(param.id);
-              setNome(param.nome);
-              setAltura(param.altura);
-              setIdade(param.idade);
-              setNascimento(param.nascimento);
+              // setNome(param.nome);
+              // setAltura(param.altura);
+              //
+              // setIdade(param.idade);
+              //
+              // setNascimento(param.nascimento);
+              //
+              // setPeso(param.peso);
+              // setUltimoPagamento(param.ultimoPagamento);
 
-              setPeso(param.peso);
-              setUltimoPagamento(param.ultimoPagamento);
+              form.setFieldsValue({
+                ...param,
+                nascimento: moment(param.nascimento, dateFormat),
+                ultimoPagamento: moment(param.ultimoPagamento, dateFormatList),
+              })
+
               editarCliente();
+
+              console.log({param})
             }}
             style={{ margin: "3px", borderRadius: "500px", minWidth: "50px" }}
           >
@@ -185,7 +198,7 @@ const ListaClientes = () => {
     listClients();
   }, []);
 
-  const [form] = Form.useForm();
+
 
   return (
     <div>
@@ -225,59 +238,51 @@ const ListaClientes = () => {
             onCancel={handleCancel}
             footer={null}
           >
-            <Form className="form" form={form}>
-              <Form.Item name="nome">
-                <label htmlFor="">Nome completo:</label>
+            <Form className="form" form={form} layout='vertical'>
+              <Form.Item name="nome" label='Nome Completo'>
                 <Input
                   autoFocus
                   placeholder="Nome completo: "
-                  value={nome}
-                  onChange={(e) => setNome(e.target.value)}
                 />
               </Form.Item>
-              <Form.Item name="idade">
-                <label htmlFor="">Idade:</label>
+              <Form.Item name="idade" label='Idade'>
                 <Input
                   type="number"
                   placeholder="Idade: "
-                  value={idade}
-                  onChange={(e) => setIdade(e.target.value)}
                 />
               </Form.Item>
-              <Form.Item name="peso">
-                <label htmlFor="">Peso:</label>
+              <Form.Item name="peso" label='Peso'>
                 <Input
                   type="number"
                   placeholder="Peso: "
-                  value={peso}
-                  onChange={(e) => setPeso(e.target.value)}
                 />
               </Form.Item>
-              <Form.Item name="altura">
-                <label htmlFor="">Altura:</label>
+              <Form.Item name="altura" label='Altura'>
                 <Input
                   type="number"
                   placeholder="Altura: "
-                  value={altura}
-                  onChange={(e) => setAltura(e.target.value)}
                 />
               </Form.Item>
               <Form.Item name="nascimento" label="Data de nascimento">
                 <DatePicker
                   placeholder="Data de nascimento:"
-                  value={nascimento}
-                  onChange={(e) => {
-                    setNascimento(e);
-                  }}
+                  // value={nascimento}
+                  // onChange={(e) => {
+                  //   setNascimento(e);
+                  // }}
+                  format={dateFormatList}
                 />
               </Form.Item>
+
               <Form.Item name="ultimoPagamento" label="Último pagamento">
                 <DatePicker
-                  placeholder={ultimoPagamento}
+                  // placeholder={ultimoPagamento}
                   disabled
-                  value={ultimoPagamento}
+                  format={dateFormatList}
+                  // value={ultimoPagamento}
                 />
               </Form.Item>
+
               <Form.Item name="butao">
                 <Button
                   style={{
