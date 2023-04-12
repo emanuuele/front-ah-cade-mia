@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import HeaderSecond from "../../components/HeaderSecond";
 import React, { useState } from "react";
 import api from "../../services/api";
-import moment from "moment/moment";
 dayjs.extend(customParseFormat);
 const dateFormatList = "DD/MM/YYYY";
 
@@ -15,29 +14,11 @@ const Cadastro = () => {
   function linkTo(param) {
     navigate(`/${param}`);
   }
-  let data;
-  let dia = new Date().getDate();
-  let mes = new Date().getMonth() + 1;
-  let ano = new Date().getFullYear();
-
-  if (dia < 10 && mes < 10) {
-    dia = `0${dia}`;
-    mes = `0${mes}`;
-    data = `${dia}/${mes}/${ano}`;
-  } else if (dia > 10 && mes < 10) {
-    dia = dia;
-    mes = `0${mes}`;
-    data = `${dia}/${mes}/${ano}`;
-  } else if (dia < 10 && mes > 10) {
-    dia = `0${dia}`;
-    mes = mes;
-    data = `${dia}/${mes}/${ano}`;
-  }
   const [nome, setNome] = useState("");
   const [idade, setIdade] = useState(null);
   const [peso, setPeso] = useState(null);
   const [altura, setAltura] = useState(null);
-  const [nascimento, setNascimento] = useState(data);
+  const [nascimento, setNascimento] = useState('');
 
   async function createClient() {
     let ultimoPagamento = new Date();
@@ -51,7 +32,7 @@ const Cadastro = () => {
       ultimoPagamento: ultimoPagamentoString,
     };
 
-    const response = await api().post("/clients", { clientData });
+    await api().post("/clients", { clientData });
     linkTo("/listarClientes");
   }
   return (

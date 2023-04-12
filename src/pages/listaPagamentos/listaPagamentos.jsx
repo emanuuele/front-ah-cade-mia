@@ -1,5 +1,4 @@
 import { Table } from "antd"
-import { formatToBRL } from 'brazilian-values';
 import React, { useState } from "react";
 import HeaderSecond from "../../components/HeaderSecond"
 import api from "../../services/api";

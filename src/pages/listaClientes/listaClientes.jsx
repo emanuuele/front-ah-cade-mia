@@ -1,32 +1,25 @@
 import { Button, DatePicker, Form, Input, Modal, Table, Switch } from "antd";
-import React, { useState } from "react";
+import React from "react";
 import HeaderSecond from "../../components/HeaderSecond";
+import api from "../../services/api";
+import moment from "moment";
+import locale from "antd/es/date-picker/locale/pt_BR";
+import { dateFormatList } from "../../fungeng";
+
 import "./style.scss";
 import "../../style.css";
-import api from "../../services/api";
-import { formatToBRL } from "brazilian-values";
-import dayjs from "dayjs";
-import moment from "moment";
-
-const dateFormatList = "DD/MM/YYYY";
-const dateFormat = "YYYY/MM/DD";
 
 const ListaClientes = () => {
   const [form] = Form.useForm();
 
-  const [excluirModalOpen, setExcluirModalOpen] = useState(false);
-  const [editarModalOpen, setEditarModalOpen] = useState(false);
-  const [efetuarPagamento, setEfetuarPagamento] = useState(false);
-  const [listClientsData, setListClientsData] = useState([]);
-  const [pesquisa, setPesquisa] = useState(null);
-  const [nome, setNome] = useState("");
-  const [idade, setIdade] = useState(null);
-  const [peso, setPeso] = useState(null);
-  const [altura, setAltura] = useState(null);
-  const [nascimento, setNascimento] = useState(null);
-  const [ultimoPagamento, setUltimoPagamento] = useState(null);
-  const [id, setId] = useState(null);
-  const [valor, setValor] = useState("");
+  const [excluirModalOpen, setExcluirModalOpen] = React.useState(false);
+  const [editarModalOpen, setEditarModalOpen] = React.useState(false);
+  const [efetuarPagamento, setEfetuarPagamento] = React.useState(false);
+  const [listClientsData, setListClientsData] = React.useState([]);
+  const [pesquisa, setPesquisa] = React.useState(null);
+  const [id, setId] = React.useState(null);
+  const [valor, setValor] = React.useState("");
+
   const handleOkEditar = () => {
     setEditarModalOpen(false);
     setEfetuarPagamento(false);
@@ -91,25 +84,13 @@ const ListaClientes = () => {
             type="default"
             onClick={() => {
               setId(param.id);
-              // setNome(param.nome);
-              // setAltura(param.altura);
-              //
-              // setIdade(param.idade);
-              //
-              // setNascimento(param.nascimento);
-              //
-              // setPeso(param.peso);
-              // setUltimoPagamento(param.ultimoPagamento);
-
               form.setFieldsValue({
                 ...param,
-                nascimento: moment(param.nascimento, dateFormat),
+                nascimento: moment(param.nascimento, "DD/MM/YYYY"),
                 ultimoPagamento: moment(param.ultimoPagamento, dateFormatList),
-              })
+              });
 
               editarCliente();
-
-              console.log({param})
             }}
             style={{ margin: "3px", borderRadius: "500px", minWidth: "50px" }}
           >
@@ -130,7 +111,6 @@ const ListaClientes = () => {
             type="primary"
             onClick={() => {
               setId(param.id);
-              // console.log(id);
               efetuarPagamentoa();
             }}
             style={{ margin: "3px", borderRadius: "500px", minWidth: "50px" }}
@@ -143,24 +123,26 @@ const ListaClientes = () => {
   ];
 
   async function putClients() {
+    const formValues = form.getFieldsValue(true);
+
     const clientData = {
-      nome: nome,
-      idade: idade,
-      peso: peso,
-      altura: altura,
-      nascimento: nascimento.format(dateFormatList),
-      ultimoPagamento: new Date(),
+      ...formValues,
+      nascimento: formValues["nascimento"].format(dateFormatList),
     };
-    const response = await api().put(`/clients/${id}`, { clientData });
+
+    delete clientData.ultimoPagamento;
+
+    await api().put(`/clients/${id}`, { clientData });
     listClients();
     setEditarModalOpen(false);
   }
 
   async function deleteClient() {
-    const response = await api().delete(`/clients/${id}`);
+    await api().delete(`/clients/${id}`);
     listClients();
     setExcluirModalOpen(false);
   }
+
   async function makePayment() {
     let ultimoPagamento = new Date();
     let ultimoPagamentoString = ultimoPagamento.toISOString().slice(0, 10);
@@ -169,7 +151,7 @@ const ListaClientes = () => {
       ultimoPagamento: ultimoPagamentoString,
       id_cliente: id,
     };
-    const response = await api().post(`/pagamentos`, { pagamento });
+    await api().post(`/pagamentos`, { pagamento });
     listClients();
     setEfetuarPagamento(false);
   }
@@ -188,17 +170,18 @@ const ListaClientes = () => {
   const onChangeVeacos = async (checked) => {
     checked ? listVeacos() : listClients();
   };
+
   async function filterClients() {
-    console.log(`/clients/${pesquisa}`);
-    const response = await api().get(`/clients/${pesquisa}`);
+    console.log(`/clients/${pesquisa == null ? "" : pesquisa}`);
+    const response = await api().get(
+      `/clients/${pesquisa == null ? "" : pesquisa}`
+    );
     setListClientsData(response.data);
   }
 
   React.useEffect(() => {
     listClients();
   }, []);
-
-
 
   return (
     <div>
@@ -238,49 +221,56 @@ const ListaClientes = () => {
             onCancel={handleCancel}
             footer={null}
           >
-            <Form className="form" form={form} layout='vertical'>
-              <Form.Item name="nome" label='Nome Completo'>
-                <Input
-                  autoFocus
-                  placeholder="Nome completo: "
-                />
+            <Form
+              className="form"
+              form={form}
+              layout="vertical"
+              onFinish={putClients}
+            >
+              <Form.Item
+                name="nome"
+                label="Nome Completo"
+                rules={[
+                  { required: true, message: "Preencha o Nome Completo" },
+                ]}
+              >
+                <Input autoFocus placeholder="Nome completo: " />
               </Form.Item>
-              <Form.Item name="idade" label='Idade'>
-                <Input
-                  type="number"
-                  placeholder="Idade: "
-                />
+              <Form.Item
+                name="idade"
+                label="Idade"
+                rules={[{ required: true, message: "Preencha a idade " }]}
+              >
+                <Input type="number" placeholder="Idade: " />
               </Form.Item>
-              <Form.Item name="peso" label='Peso'>
-                <Input
-                  type="number"
-                  placeholder="Peso: "
-                />
+              <Form.Item
+                name="peso"
+                label="Peso"
+                rules={[{ required: true, message: "Preencha o peso" }]}
+              >
+                <Input type="number" placeholder="Peso: " />
               </Form.Item>
-              <Form.Item name="altura" label='Altura'>
-                <Input
-                  type="number"
-                  placeholder="Altura: "
-                />
+              <Form.Item
+                name="altura"
+                label="Altura"
+                rules={[{ required: true, message: "Preencha a altura" }]}
+              >
+                <Input type="number" placeholder="Altura: " />
               </Form.Item>
-              <Form.Item name="nascimento" label="Data de nascimento">
+              <Form.Item
+                name="nascimento"
+                label="Data de nascimento"
+                rules={[{ required: true, message: "Preencha a altura" }]}
+              >
                 <DatePicker
                   placeholder="Data de nascimento:"
-                  // value={nascimento}
-                  // onChange={(e) => {
-                  //   setNascimento(e);
-                  // }}
                   format={dateFormatList}
+                  locale={locale}
                 />
               </Form.Item>
 
               <Form.Item name="ultimoPagamento" label="Último pagamento">
-                <DatePicker
-                  // placeholder={ultimoPagamento}
-                  disabled
-                  format={dateFormatList}
-                  // value={ultimoPagamento}
-                />
+                <DatePicker disabled format={dateFormatList} />
               </Form.Item>
 
               <Form.Item name="butao">
@@ -290,7 +280,7 @@ const ListaClientes = () => {
                     minWidth: "200px",
                     width: "100%",
                   }}
-                  onClick={() => putClients()}
+                  // onClick={() => putClients()}
                   htmlType="submit"
                   type="primary"
                 >
